@@ -67,7 +67,7 @@ void from_json(const json& j, Workspace& w)
     j.at("urgent").get_to(w.urgent);
 }
 
-
+// Получение название активного WorkSpace i3
 std::string get_current_workspace_name() 
 {
     std::array<char, 4096> buffer;
@@ -132,22 +132,14 @@ void move_active_window_to_workspace(int number)
 {
     std::string cmd = "i3-msg move container to workspace " + std::to_string(number);
     system(cmd.c_str());
+
+    cmd = "i3-msg workspace " + std::to_string(number);
+    system(cmd.c_str());
+
 }
 
 int main(int argc, char *argv[])
 {
-
-    std::string activeWorkSpace = get_current_workspace_name();
- 
-    int selected = 0;
-    try 
-    {
-        selected = std::stoi(activeWorkSpace) - 1;
-    } catch (...) 
-    {
-        selected = 0;
-    }
-
 
     QApplication a(argc, argv);
 
@@ -161,12 +153,16 @@ int main(int argc, char *argv[])
         ui.listWidget->addItem(":: Workspace ::: " + QString::number(i));
     }
 
+    // Получение активного WorkSpace
+    std::string activeWorkSpace = get_current_workspace_name();
+
+    // Опеделение активного WorkSpace
     ui.listWidget->setCurrentRow( std::stoi(activeWorkSpace) - 1 );  // Выбирает 4-й элемент (нумерация с 0)
     qDebug() << activeWorkSpace;
 
     ui.label->setText("Active WorkSpace: " + QString::fromStdString(activeWorkSpace));
 
-
+    // Событие переключения между объектами списка listView
     QObject::connect(ui.listWidget, &QListWidget::itemSelectionChanged, [&] () 
     {
         QList<QListWidgetItem *> selectedItems = ui.listWidget->selectedItems();
@@ -178,11 +174,8 @@ int main(int argc, char *argv[])
             qDebug() << "Выбрано:" << index;
             ui.label->setText("Active WorkSpace: " + QString::number(index));
 
-            std::string cmd = "i3-msg move container to workspace " + std::to_string(index);
-            system(cmd.c_str());
-
-            cmd = "i3-msg workspace " + std::to_string(index);
-            system(cmd.c_str());
+            // Перемешение между Workspace
+            move_active_window_to_workspace( index );
 
         } else 
         {
@@ -190,12 +183,11 @@ int main(int argc, char *argv[])
         }
     });
 
+    // Закрытие приложения при нажатия Esc
     QShortcut *esc = new QShortcut(QKeySequence(Qt::Key_Escape), &window);
     QObject::connect(esc, &QShortcut::activated, []() {
         QApplication::quit();
     });
-
-
 
     window.show();
     return a.exec();
