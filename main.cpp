@@ -1,16 +1,19 @@
-//g++ sw_wk.cpp -o get_ws -lX11 && ./get_ws
-//g++ sw_wk.cpp -std=c++17 -lX11 -lftxui-component -lftxui-dom -lftxui-screen -o sw_wk && ./sw_wk
+// g++ gui.cpp -o my_app -I. -fPIC $(pkg-config --cflags --libs Qt6Widgets)
 
-#include <cstddef>
-#include <ftxui/component/screen_interactive.hpp>
-#include <ftxui/component/component.hpp>
-#include <ftxui/dom/elements.hpp> 
+#include "lib/json.hpp" // Подключаем библиотеку nlohmann/json
+
+#include <QApplication>
+#include <QWidget>
+#include <QShortcut>
+#include <QKeySequence>
+#include <string>
+#include "lib/gui.h" // ваш UI-файл
 
 #include <iostream>
 #include <string>
 #include <vector>
-#include <json.hpp> // Подключаем библиотеку nlohmann/json
 
+#include <cstddef>
 #include <cstdio>
 #include <memory>
 #include <array>
@@ -18,7 +21,6 @@
 
 // Для удобства используем псевдоним nlohmann::json
 using json = nlohmann::json;
-using namespace ftxui;
 
 // 1. Структура для вложенного объекта "rect"
 struct Rect {
@@ -65,6 +67,7 @@ void from_json(const json& j, Workspace& w)
     j.at("urgent").get_to(w.urgent);
 }
 
+// Получение название активного WorkSpace i3
 std::string get_current_workspace_name() 
 {
     std::array<char, 4096> buffer;
@@ -129,89 +132,63 @@ void move_active_window_to_workspace(int number)
 {
     std::string cmd = "i3-msg move container to workspace " + std::to_string(number);
     system(cmd.c_str());
+
+    cmd = "i3-msg workspace " + std::to_string(number);
+    system(cmd.c_str());
+
 }
 
-int main() 
+int main(int argc, char *argv[])
 {
-    // std::string cmd = "i3-msg focus mode_toggle";
-    // system(cmd.c_str());
 
+    QApplication a(argc, argv);
+
+    QWidget window;
+    Ui::Form ui;
+    ui.setupUi(&window); // инициализация UI внутри виджета window
+
+    for (int i = 1; i <= 10; ++i)
+    {
+        /* code */
+        ui.listWidget->addItem(":: Workspace ::: " + QString::number(i));
+    }
+
+    // Получение активного WorkSpace
     std::string activeWorkSpace = get_current_workspace_name();
-    ScreenInteractive screen = ScreenInteractive::TerminalOutput();
 
+    // Опеделение активного WorkSpace
+    ui.listWidget->setCurrentRow( std::stoi(activeWorkSpace) - 1 );  // Выбирает 4-й элемент (нумерация с 0)
+    qDebug() << activeWorkSpace;
 
-    int selected = std::stoi(activeWorkSpace) - 1;
+    ui.label->setText("Active WorkSpace: " + QString::fromStdString(activeWorkSpace));
 
-    std::vector<std::string> items = 
+    // Событие переключения между объектами списка listView
+    QObject::connect(ui.listWidget, &QListWidget::itemSelectionChanged, [&] () 
     {
-        "Workspace: 1",
-        "Workspace: 2",
-        "Workspace: 3",
-        "Workspace: 4",
-        "Workspace: 5",
-        "Workspace: 6",
-        "Workspace: 7",
-        "Workspace: 8",
-        "Workspace: 9",
-        "Workspace: 10",
-    };
+        QList<QListWidgetItem *> selectedItems = ui.listWidget->selectedItems();
 
-    // Создаём свой Menu вручную
-    Component menu = Renderer([&] {
-        Elements entries;
-        for (int i = 0; i < items.size(); ++i) {
-            bool is_selected = (i == selected);
-            auto style = is_selected 
-                ? color(Color::Black) | bgcolor(Color::Cyan) | bold | frame // Без рамки
-                : color(Color::GrayLight);
-            entries.push_back(text(items[i]) | style);
+        if (!selectedItems.isEmpty()) 
+        {
+            QListWidgetItem *item = selectedItems.first();
+            int index = ui.listWidget->row(item) + 1;  // 👈 получаем индекс
+            qDebug() << "Выбрано:" << index;
+            ui.label->setText("Active WorkSpace: " + QString::number(index));
+
+            // Перемешение между Workspace
+            move_active_window_to_workspace( index );
+
+        } else 
+        {
+            qDebug() << "Ничего не выбрано.";
         }
-
-        return vbox(std::move(entries));
     });
 
-    // Обработка клавиш
-    menu = CatchEvent(menu, [&](Event event) {
-        if (event == Event::Character('q') || event == Event::Character('Q') || event == Event::Character('й') || event == Event::Character('Й')) {
-            screen.Exit(); // Завершаем приложение
-            return 1;   // Событие обработано
-        }
-        if (event == Event::ArrowUp && selected > 0) {
-            selected--;
-
-            std::string cmd = "i3-msg move container to workspace " + std::to_string(selected+1);
-            system(cmd.c_str());
-
-            cmd = "i3-msg workspace " + std::to_string(selected+1);
-            system(cmd.c_str());
-
-            return 1;
-        }
-        if (event == Event::ArrowDown && selected < (int)items.size() - 1) {
-            selected++;
-
-            std::string cmd = "i3-msg move container to workspace " + std::to_string(selected+1);
-            system(cmd.c_str());
-
-            cmd = "i3-msg workspace " + std::to_string(selected+1);
-            system(cmd.c_str());
-
-            return 1;
-        }
-        return 0;
-
+    // Закрытие приложения при нажатия Esc
+    QShortcut *esc = new QShortcut(QKeySequence(Qt::Key_Escape), &window);
+    QObject::connect(esc, &QShortcut::activated, []() {
+        QApplication::quit();
     });
 
-    Component renderer = Renderer(menu, [&] 
-    {
-        return vbox({
-            text("Workspace List:") | bold | color(Color::MagentaLight) | size(HEIGHT, LESS_THAN, 100) ,
-            separator(),
-            menu->Render() | bold | color(Color::GrayLight),
-            separator(),
-            text("Active: " + items[selected]) | color(Color::GreenLight)
-        }) | frame | border | size(HEIGHT, LESS_THAN, 100);
-    });
-
-    screen.Loop(renderer);
+    window.show();
+    return a.exec();
 }
