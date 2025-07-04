@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'designerWzVtKp.ui'
+** Form generated from reading UI file 'guiVpdGbh.ui'
 **
-** Created by: Qt User Interface Compiler version 6.9.1
+** Created by: Qt User Interface Compiler version 5.15.17
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef DESIGNERWZVTKP_H
-#define DESIGNERWZVTKP_H
+#ifndef GUIVPDGBH_H
+#define GUIVPDGBH_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
@@ -25,65 +25,63 @@ public:
     QFrame *frame;
     QWidget *verticalLayoutWidget;
     QVBoxLayout *verticalLayout;
-    QLabel *label;
     QListWidget *listWidget;
-    QLabel *label_2;
+    QLabel *label;
 
     void setupUi(QWidget *Form)
     {
         if (Form->objectName().isEmpty())
-            Form->setObjectName("Form");
-        Form->resize(471, 319);
+            Form->setObjectName(QString::fromUtf8("Form"));
+        Form->resize(510, 373);
         frame = new QFrame(Form);
-        frame->setObjectName("frame");
-        frame->setGeometry(QRect(10, 12, 451, 291));
+        frame->setObjectName(QString::fromUtf8("frame"));
+        frame->setGeometry(QRect(10, 12, 491, 351));
         frame->setStyleSheet(QString::fromUtf8("QFrame {\n"
-"	border: 3px solid white;\n"
-"	border-radius: 10px;\n"
+"   border: 3px solid white;\n"
+"   border-radius: 10px;\n"
 "}"));
         verticalLayoutWidget = new QWidget(frame);
-        verticalLayoutWidget->setObjectName("verticalLayoutWidget");
-        verticalLayoutWidget->setGeometry(QRect(0, -1, 451, 291));
+        verticalLayoutWidget->setObjectName(QString::fromUtf8("verticalLayoutWidget"));
+        verticalLayoutWidget->setGeometry(QRect(0, -1, 491, 351));
         verticalLayout = new QVBoxLayout(verticalLayoutWidget);
-        verticalLayout->setObjectName("verticalLayout");
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
-        label = new QLabel(verticalLayoutWidget);
-        label->setObjectName("label");
+        listWidget = new QListWidget(verticalLayoutWidget);
+        listWidget->setObjectName(QString::fromUtf8("listWidget"));
         QFont font;
         font.setPointSize(14);
-        label->setFont(font);
-        label->setStyleSheet(QString::fromUtf8("QLabel {\n"
-"	border-radius: 0px;\n"
-"	border: 0px solid #ccc;\n"
-"	border-bottom: 3px solid #ccc;\n"
-"	padding: 6px;\n"
-"	color: #d89eff;\n"
-"}"));
-
-        verticalLayout->addWidget(label);
-
-        listWidget = new QListWidget(verticalLayoutWidget);
-        listWidget->setObjectName("listWidget");
+        listWidget->setFont(font);
         listWidget->setStyleSheet(QString::fromUtf8("QListWidget {\n"
-"	background-color: transparent;\n"
-"	border: 0px;\n"
-"	margin: 6px\n"
-"}"));
+"   background-color: transparent;\n"
+"   border: 0px;\n"
+"   margin: 6px\n"
+"}\n"
+"\n"
+"QListWidget::item:selected {\n"
+"        background-color: #5c6bc0;   /* \321\206\320\262\320\265\321\202 \321\204\320\276\320\275\320\260 \320\277\321\200\320\270 \320\262\321\213\320\261\320\276\321\200\320\265 */\n"
+"        color: #ffffff;              /* \321\206\320\262\320\265\321\202 \321\202\320\265\320\272\321\201\321\202\320\260 */\n"
+"        border-radius: 6px;\n"
+"        margin: 2px;\n"
+"    }"));
+        listWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+        listWidget->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 
         verticalLayout->addWidget(listWidget);
 
-        label_2 = new QLabel(verticalLayoutWidget);
-        label_2->setObjectName("label_2");
-        label_2->setFont(font);
-        label_2->setStyleSheet(QString::fromUtf8("QLabel {\n"
-"	border-radius: 0px;\n"
-"	border: 0px;\n"
-"	border-top: 3px solid white;\n"
-"	padding: 6px;\n"
-"	color: #86eba0;\n"
+        label = new QLabel(verticalLayoutWidget);
+        label->setObjectName(QString::fromUtf8("label"));
+        QFont font1;
+        font1.setPointSize(14);
+        label->setFont(font1);
+        label->setStyleSheet(QString::fromUtf8("QLabel {\n"
+"   border-radius: 0px;\n"
+"   border: 0px;\n"
+"   border-top: 3px solid white;\n"
+"   padding: 10px;\n"
+"   color: #86eba0;\n"
 "}"));
 
-        verticalLayout->addWidget(label_2);
+        verticalLayout->addWidget(label);
 
 
         retranslateUi(Form);
@@ -94,8 +92,7 @@ public:
     void retranslateUi(QWidget *Form)
     {
         Form->setWindowTitle(QCoreApplication::translate("Form", "Form", nullptr));
-        label->setText(QCoreApplication::translate("Form", "WorkSpace List:", nullptr));
-        label_2->setText(QCoreApplication::translate("Form", "Active:", nullptr));
+        label->setText(QCoreApplication::translate("Form", "Active:", nullptr));
     } // retranslateUi
 
 };
@@ -106,4 +103,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // DESIGNERWZVTKP_H
+#endif // GUIVPDGBH_H

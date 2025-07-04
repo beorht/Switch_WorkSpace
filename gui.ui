@@ -61,12 +61,23 @@
      </item>
      <item>
       <widget class="QListWidget" name="listWidget">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
        <property name="styleSheet">
         <string notr="true">QListWidget {
 	background-color: transparent;
 	border: 0px;
 	margin: 6px
 }</string>
+       </property>
+       <property name="verticalScrollMode">
+        <enum>QAbstractItemView::ScrollPerPixel</enum>
+       </property>
+       <property name="horizontalScrollMode">
+        <enum>QAbstractItemView::ScrollPerPixel</enum>
        </property>
       </widget>
      </item>
